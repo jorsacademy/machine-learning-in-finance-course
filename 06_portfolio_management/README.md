@@ -1,81 +1,184 @@
-# Clustering for Portfolio Diversification
+# Portfolio Management
 
-Clustering can support portfolio construction by grouping assets that exhibit similar behavior. The objective is not to let a clustering algorithm choose a portfolio automatically. Instead, clustering is used as a structural tool to reduce redundancy and reveal groups of assets that may share common return drivers.
+This section covers classical portfolio theory and machine-learning approaches to portfolio construction. The examples are designed to be reproducible, transparent, and suitable for teaching.
 
-## Why clustering can help
+## Included lessons
 
-A portfolio containing many highly similar assets can still be poorly diversified. Clustering can identify this hidden concentration by grouping assets according to return behavior, risk characteristics, factor exposures, or correlation structure.
+### 1. Risk and Return Calculations
 
-Common applications include:
+`01_risk_return_calculations.py`
 
-- correlation-based clustering of asset returns;
-- clustering by expected return and volatility;
-- grouping assets by factor exposures;
-- identifying unusual or isolated assets;
-- comparing how asset relationships change across market regimes.
+Covers:
 
-## K-Means approach
+- simple asset returns;
+- annualized expected return;
+- annualized volatility;
+- covariance matrices;
+- portfolio expected return;
+- portfolio variance and volatility;
+- Sharpe ratio.
 
-K-Means is useful when each asset can be represented by a fixed feature vector such as annualized return, volatility, downside volatility, beta, momentum, or factor exposures.
-
-Because K-Means uses Euclidean distance, features should generally be standardized before fitting the model. Otherwise a feature with a larger numerical scale can dominate the clustering result.
-
-A simplified objective is
+Core formulas:
 
 \[
-\min_{C_1,\ldots,C_K} \sum_{k=1}^{K} \sum_{x_i \in C_k} \lVert x_i - \mu_k \rVert^2,
+E[R_p] = w^T \mu
 \]
 
-where \(\mu_k\) is the centroid of cluster \(C_k\).
-
-The included example uses the silhouette score as a simple diagnostic for choosing a demonstration value of \(K\). This is not a guarantee that the selected clustering is economically meaningful.
-
-## Correlation-based hierarchical clustering
-
-For diversification, correlation is often more meaningful than Euclidean distance between raw price series. A common correlation distance is
+and
 
 \[
-d_{ij} = \sqrt{\frac{1 - \rho_{ij}}{2}},
+\sigma_p^2 = w^T \Sigma w.
 \]
 
-where \(\rho_{ij}\) is the return correlation between assets \(i\) and \(j\).
+### 2. Portfolio Optimization Basics
 
-The implementation in this repository converts the correlation matrix to a valid condensed distance matrix before applying hierarchical clustering. This is preferable to passing rows of a correlation matrix directly to Ward linkage, which does not represent the intended correlation-distance problem.
+`02_portfolio_optimization_basics.py`
 
-## Interpreting clusters
+Demonstrates constrained long-only mean-variance optimization using SLSQP. It includes minimum-variance optimization and minimum-variance optimization subject to a target expected return.
 
-A cluster is not automatically an economic sector or a stable risk factor. After clustering, inspect:
+The examples enforce
 
-- cluster-level correlations;
-- sector and industry composition;
-- factor exposures;
-- liquidity and trading costs;
-- cluster stability across rolling windows;
-- behavior during stressed market periods.
+\[
+\sum_i w_i = 1
+\]
 
-Selecting one asset from each cluster is only a heuristic. Real portfolio construction should still consider expected returns, covariance, concentration limits, liquidity, turnover, transaction costs, and risk constraints.
+with long-only bounds
 
-## Dynamic relationships
+\[
+0 \leq w_i \leq 1.
+\]
 
-Asset relationships are non-stationary. A clustering learned from one period may not remain valid in another. In practice, clustering should be re-estimated periodically and its stability should be measured rather than assumed.
+### 3. Efficient Frontier Construction
 
-## Advanced extensions
+`03_efficient_frontier.py`
 
-Useful extensions include PCA before clustering, rolling-window clustering, factor-based clustering, regime-conditioned clustering, spectral clustering, and clustering based on dynamic time warping for shape similarity. PCA can be useful when the feature set is highly correlated, but it changes interpretability because clusters are then formed in component space rather than the original feature space.
+Constructs a numerical efficient frontier by repeatedly solving a constrained minimum-variance problem for different target returns. The visualization also compares the frontier with an equal-weight portfolio.
 
-Reinforcement learning should not be described as a clustering method. It can use cluster-derived state variables or portfolio constraints, but clustering and reinforcement learning solve different problems.
+### 4. Sharpe Ratio Optimization
 
-## Included code
+`04_sharpe_ratio_optimization.py`
 
-`clustering_portfolio_diversification.py` demonstrates:
+Finds the long-only portfolio that maximizes the ex-ante Sharpe ratio:
 
-- reproducible simulated asset prices;
-- annualized return and risk features;
-- feature standardization;
-- K-Means clustering;
-- silhouette analysis;
+\[
+S = \frac{E[R_p] - R_f}{\sigma_p}.
+\]
+
+Expected returns and covariance estimates are treated as inputs rather than known truths. In real portfolio management, estimation error is often more important than optimization precision.
+
+### 5. Factor Models
+
+`05_factor_models.py`
+
+Demonstrates linear factor exposure estimation for multiple assets. The example estimates market, size, and value exposures using ordinary least squares.
+
+A generic factor representation is
+
+\[
+R_i = \alpha_i + \beta_{i1}F_1 + \cdots + \beta_{ik}F_k + \epsilon_i.
+\]
+
+Factor models can help explain systematic return drivers and portfolio concentration that is not visible from asset labels alone.
+
+### 6. Clustering for Portfolio Diversification
+
+`clustering_portfolio_diversification.py`
+
+Clustering is used as a structural tool rather than an automatic portfolio optimizer. The implementation includes:
+
+- feature standardization before K-Means;
+- silhouette diagnostics;
+- clustering by return and risk characteristics;
 - correlation-distance hierarchical clustering;
-- a simple cluster-representative heuristic;
-- cluster visualizations.
+- representative asset selection;
+- cluster visualization.
 
-The material is educational and does not constitute investment advice.
+For correlation-based hierarchical clustering, the implementation uses
+
+\[
+d_{ij} = \sqrt{\frac{1 - \rho_{ij}}{2}}
+\]
+
+and converts the resulting matrix to a valid condensed distance representation before linkage.
+
+### 7. Neural Networks for Portfolio Weights
+
+`07_neural_network_portfolio_weights.py`
+
+Uses a small neural network to map recent return statistics to long-only portfolio weights. A softmax output layer guarantees that weights are non-negative and sum to one.
+
+The model is optimized using a differentiable Sharpe-like training objective. The example uses chronological train/test separation and estimates preprocessing statistics only on the training period.
+
+This is a teaching example, not a claim that neural networks should replace classical portfolio optimization.
+
+### 8. Reinforcement Learning Basics
+
+`08_reinforcement_learning_basics.py`
+
+Introduces the portfolio-management interpretation of:
+
+- state;
+- action;
+- reward;
+- transition;
+- policy;
+- episode.
+
+`portfolio_rl_env.py` contains a deliberately small two-asset regime environment used by the reinforcement-learning examples.
+
+### 9. Q-Learning for Portfolio Management
+
+`09_q_learning_portfolio_management.py`
+
+Provides a complete tabular Q-learning example rather than pseudocode placeholders. The implementation includes:
+
+- epsilon-greedy exploration;
+- temporal-difference updates;
+- discounting;
+- epsilon decay;
+- out-of-sample evaluation in a separately seeded toy environment.
+
+The Q-learning update is
+
+\[
+Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha\left[r_{t+1} + \gamma\max_a Q(s_{t+1},a) - Q(s_t,a_t)\right].
+\]
+
+### 10. Deep Reinforcement Learning
+
+`10_deep_reinforcement_learning.py`
+
+Extends the same environment with a small Deep Q-Network. It demonstrates:
+
+- neural approximation of the Q-function;
+- experience replay;
+- epsilon-greedy exploration;
+- a target network;
+- batched temporal-difference targets.
+
+The environment is intentionally simple so the mechanics of DQN remain understandable. A realistic portfolio RL system would additionally require transaction costs, turnover constraints, non-stationary observations, partial observability, risk constraints, careful reward design, walk-forward validation, and robust benchmark comparisons.
+
+## Shared utilities
+
+`portfolio_utils.py` contains reusable return, covariance, and portfolio-statistics helpers.
+
+`portfolio_rl_env.py` contains the toy environment shared by the reinforcement-learning lessons.
+
+## Important methodological cautions
+
+Portfolio optimization is extremely sensitive to expected-return and covariance estimates. A mathematically optimal portfolio can be economically poor if the inputs are unstable.
+
+Machine-learning portfolio methods create additional risks:
+
+- look-ahead bias;
+- overfitting;
+- unstable allocation weights;
+- excessive turnover;
+- ignored transaction costs;
+- regime dependence;
+- unrealistic reward functions;
+- weak benchmark selection.
+
+For serious work, use chronological or walk-forward evaluation and compare against simple baselines such as equal weight, minimum variance, and maximum diversification.
+
+The material in this repository is educational and does not constitute investment advice.
