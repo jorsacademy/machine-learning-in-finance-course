@@ -9,27 +9,26 @@ from tensorflow import keras
 
 def make_dataset(n: int = 1500, seed: int = 42) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
-    returns = rng.normal(0.0002, 0.012, n)
+    returns = pd.Series(rng.normal(0.0002, 0.012, n), name="return_1d")
     volume_change = rng.normal(0.0, 0.15, n)
-    volatility = pd.Series(returns).rolling(20).std().to_numpy()
 
     df = pd.DataFrame(
         {
             "return_1d": returns,
             "volume_change": volume_change,
-            "volatility_20d": volatility,
+            "volatility_20d": returns.rolling(20).std(),
+            "momentum_5d": returns.rolling(5).sum(),
+            "next_return": returns.shift(-1),
         }
     )
-    df["momentum_5d"] = pd.Series(returns).rolling(5).sum()
-    df["target"] = (pd.Series(returns).shift(-1) > 0).astype(float)
-    return df.dropna().reset_index(drop=True)
+    df = df.dropna().copy()
+    df["target"] = (df["next_return"] > 0).astype(int)
+    return df.drop(columns="next_return").reset_index(drop=True)
 
 
 def chronological_split(df: pd.DataFrame, train_fraction: float = 0.8):
     split = int(len(df) * train_fraction)
-    train = df.iloc[:split].copy()
-    test = df.iloc[split:].copy()
-    return train, test
+    return df.iloc[:split].copy(), df.iloc[split:].copy()
 
 
 def main() -> None:
@@ -54,19 +53,18 @@ def main() -> None:
             keras.layers.Dense(1, activation="sigmoid"),
         ]
     )
-
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate=1e-3),
         loss="binary_crossentropy",
         metrics=[keras.metrics.AUC(name="auc")],
     )
-
     model.fit(
         X_train_scaled,
         y_train,
         validation_split=0.2,
         epochs=20,
         batch_size=32,
+        shuffle=False,
         verbose=0,
     )
 
