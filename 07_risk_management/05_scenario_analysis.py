@@ -46,7 +46,8 @@ def main() -> None:
         rows.append({"scenario": name, "portfolio_return": portfolio_return})
 
     results = pd.DataFrame(rows).set_index("scenario")
-    print(results.applymap(lambda x: f"{x:.2%}"))
+    formatted = results.map(lambda x: f"{x:.2%}")
+    print(formatted)
     print("\nThis is a linear sensitivity framework; real scenario models can include nonlinear and path-dependent effects.")
 
 
