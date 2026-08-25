@@ -3,9 +3,7 @@
 import numpy as np
 from scipy.optimize import minimize
 
-from importlib import import_module
-
-risk = import_module("06_portfolio_management.01_risk_return_calculations")
+from portfolio_utils import annualized_statistics, portfolio_statistics, simulate_returns
 
 
 def minimum_variance_weights(annual_cov: np.ndarray) -> np.ndarray:
@@ -42,15 +40,15 @@ def target_return_weights(expected_returns: np.ndarray, annual_cov: np.ndarray, 
 
 
 def main() -> None:
-    returns = risk.simulate_returns()
-    annual_return, _, annual_cov = risk.annualized_statistics(returns)
+    returns = simulate_returns()
+    annual_return, _, annual_cov = annualized_statistics(returns)
 
     min_var = minimum_variance_weights(annual_cov.to_numpy())
     target = float(annual_return.median())
     target_w = target_return_weights(annual_return.to_numpy(), annual_cov.to_numpy(), target)
 
     for name, weights in [("Minimum variance", min_var), ("Target return", target_w)]:
-        exp_ret, vol = risk.portfolio_statistics(weights, annual_return, annual_cov)
+        exp_ret, vol = portfolio_statistics(weights, annual_return, annual_cov)
         print(f"\n{name} portfolio")
         print("Weights:", np.round(weights, 4))
         print(f"Expected return: {exp_ret:.4f}")
