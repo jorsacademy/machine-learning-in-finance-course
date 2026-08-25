@@ -14,6 +14,7 @@ This repository focuses on practical, reproducible implementations of financial 
 - `06_portfolio_management/` — portfolio analytics, optimization, clustering, neural allocation, and reinforcement learning
 - `07_risk_management/` — VaR, expected shortfall, stress testing, Monte Carlo, scenario analysis, and ML-based risk assessment
 - `08_algorithmic_trading/` — execution, market microstructure, transaction costs, backtesting, momentum, mean reversion, statistical arbitrage, pairs trading, and HFT concepts
+- `09_nlp_in_finance/` — financial news collection, preprocessing, sentiment, NER, topic modeling, embeddings, FinBERT, GPT-style workflows, and text-driven trading signals
 - `data/` — notes about data sources and local datasets
 
 ## Important Methodology Notes
@@ -28,6 +29,8 @@ Portfolio clustering examples standardize heterogeneous K-Means features and use
 
 Algorithmic-trading examples explicitly lag positions when appropriate and include transaction-cost assumptions so that a same-period signal is not credited with returns that occurred before the signal could have been executed.
 
+Financial NLP examples preserve source provenance and publication timestamps. Sentiment, entity extraction, and generative-model outputs are treated as intermediate features rather than assumed trading signals, and downstream strategies use delayed positions to avoid look-ahead bias.
+
 ## Installation
 
 ```bash
@@ -36,6 +39,12 @@ source .venv/bin/activate  # macOS/Linux
 # .venv\Scripts\activate   # Windows
 
 pip install -r requirements.txt
+```
+
+The FinBERT example has optional dependencies that are not required by the rest of the repository:
+
+```bash
+pip install transformers torch
 ```
 
 ## Educational Use
