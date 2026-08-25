@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from 08_reinforcement_learning_basics import TwoAssetRegimeEnv
+from portfolio_rl_env import TwoAssetRegimeEnv
 
 
 def train_q_learning(
