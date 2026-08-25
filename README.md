@@ -11,8 +11,9 @@ This repository focuses on practical, reproducible implementations of financial 
 - `03_time_series/` — stationarity, ACF/PACF, smoothing, ARIMA, SARIMA, GARCH, and hybrid models
 - `04_ml_market_prediction/` — classification and regression models for market prediction
 - `05_deep_learning_in_finance/` — neural networks, CNNs, RNNs, LSTMs, GRUs, and attention
-- `06_portfolio_management/` — portfolio analytics and ML-assisted diversification, including clustering
-- `07_risk_management/` — risk analytics and machine-learning-based credit risk assessment
+- `06_portfolio_management/` — portfolio analytics, optimization, clustering, neural allocation, and reinforcement learning
+- `07_risk_management/` — VaR, expected shortfall, stress testing, Monte Carlo, scenario analysis, and ML-based risk assessment
+- `08_algorithmic_trading/` — execution, market microstructure, transaction costs, backtesting, momentum, mean reversion, statistical arbitrage, pairs trading, and HFT concepts
 - `data/` — notes about data sources and local datasets
 
 ## Important Methodology Notes
@@ -24,6 +25,8 @@ Whenever a target depends on future prices or returns, predictors are constructe
 For cross-sectional credit-risk examples, preprocessing is fitted only on training data and out-of-time validation is preferred when the objective is to approximate future deployment conditions.
 
 Portfolio clustering examples standardize heterogeneous K-Means features and use a proper correlation-distance representation for hierarchical clustering rather than treating correlation-matrix rows as ordinary Euclidean observations.
+
+Algorithmic-trading examples explicitly lag positions when appropriate and include transaction-cost assumptions so that a same-period signal is not credited with returns that occurred before the signal could have been executed.
 
 ## Installation
 
