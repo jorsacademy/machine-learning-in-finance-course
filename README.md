@@ -1,5 +1,17 @@
 # Machine Learning in Finance Course
 
+<!-- portfolio-umbrella:start -->
+## Portfolio role
+
+This repository is the primary umbrella repository for this Jors Academy research area. Related projects have been consolidated under `projects/` so the methods, implementations, experiments, and case studies can be maintained and explored from one place.
+
+### Included projects
+
+- [`mean-variance-portfolio-cardinality-optimization`](projects/mean-variance-portfolio-cardinality-optimization/)
+
+Each consolidated project keeps its own files and a `SOURCE_REPOSITORY.md` provenance record. The snapshot preserves the source repository's default-branch files at consolidation time; repository-level history and metadata remain separate from the snapshot.
+<!-- portfolio-umbrella:end -->
+
 Companion code and Jupyter notebooks for the Jors Academy course **Machine Learning in Finance: A Comprehensive Course**.
 
 This repository focuses on practical, reproducible implementations of financial data processing, time-series analysis, machine learning, deep learning, portfolio management, risk management, algorithmic trading, NLP, and advanced financial applications.
