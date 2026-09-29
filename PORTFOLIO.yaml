@@ -1,0 +1,13 @@
+schema_version: 1
+repository: machine-learning-in-finance-course
+role: umbrella
+axis: application
+area: machine-learning-finance
+status: active
+owner: jorsacademy
+projects:
+  - mean-variance-portfolio-cardinality-optimization
+conventions:
+  provenance_records: true
+  reproducibility_expected: true
+  benchmark_assumptions_documented: true
